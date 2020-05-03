@@ -18,7 +18,7 @@ title: Point Cloud Library
 description: >- # this means to ignore newlines until "baseurl:"
   The Point Cloud Library (PCL) is a standalone, large scale, open project for 2D/3D image and point cloud processing.
 baseurl: "/PointCloudLibrary.github.io.test" # the subpath of your site, e.g. /blog
-url: "https://pointcloudlibrary.github.io/" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://pointcloudlibrary.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: pointclouds
 github_username:  PointCloudLibrary
 discord: https://discord.gg/JFFMAXS
