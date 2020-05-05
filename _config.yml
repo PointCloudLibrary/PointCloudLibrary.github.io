@@ -42,6 +42,10 @@ navigation:
   - title: Advanced
     url: https://pcl-advanced.readthedocs.io/
 
+header_pages:
+  - gsoc-2020.md
+  - about.md
+
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.
