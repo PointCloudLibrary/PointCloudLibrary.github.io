@@ -21,13 +21,15 @@ Point Cloud Library (PCL) runs on many operating systems, and prebuilt binaries 
 </div>
 
 An extensive list of package managers which distribute PCL is available at [repology](https://repology.org/project/pcl-pointclouds/packages).
-Nevertheless, we also provide packaged binaries and installers for a couple of platforms in our [Releases](https://github.com/PointCloudLibrary/pcl/releases) page on [GitHub](https://github.com/). Be sure to check that out, in case you're looking for something different than what is provided in the options below.
+Nevertheless, we also provide packaged binaries and installers for a couple of platforms in our [Releases](https://github.com/PointCloudLibrary/pcl/releases) page on our [GitHub repository](https://github.com/PointCloudLibrary/pcl). Be sure to check that out, in case you're looking for something different than what is provided in the options below.
 
 ## Cross-Platform
 
 In case your OS does not have a dedicated package manager, consider one of the following options.
 
 ### vcpkg
+
+[![Vcpkg package](https://repology.org/badge/version-for-repo/vcpkg/pcl-pointclouds.svg)](https://github.com/Microsoft/vcpkg/tree/master/ports/pcl)
 
 [vcpkg](https://github.com/microsoft/vcpkg) is a cross-platform open source package manager created by Microsoft, available for Windows, Linux and macOS. To install PCL on vcpkg-enabled desktops type the following on your terminal
 
@@ -38,6 +40,8 @@ PS> .\vcpkg install pcl
 This is our recommended installation method for **Windows** users.
 
 ### Homebrew
+
+[![Homebrew package](https://repology.org/badge/version-for-repo/homebrew/pcl-pointclouds.svg)](https://formulae.brew.sh/formula/pcl)
 
 [Homebrew](https://brew.sh/) became known as being missing package manager for macOS, but in recent years it extended its support to Linux. To install PCL on Homebrew-enabled desktops type the following on your terminal
 
