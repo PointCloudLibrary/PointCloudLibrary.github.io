@@ -35,7 +35,7 @@ tutorials_base_url: https://pcl-tutorials.readthedocs.io/
 advanced_base_url: https://pcl-advanced.readthedocs.io/
 
 navigation:
-  - title: API Reference
+  - title: Docs
     url: https://pointcloudlibrary.github.io/documentation
   - title: Tutorials
     url: https://pcl-tutorials.readthedocs.io/
@@ -43,6 +43,7 @@ navigation:
     url: https://pcl-advanced.readthedocs.io/
 
 header_pages:
+  - downloads.md
   - gsoc-2020.md
   - about.md
 

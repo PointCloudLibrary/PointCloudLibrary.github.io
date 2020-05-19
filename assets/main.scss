@@ -9,3 +9,44 @@
   margin-left: auto;
   margin-right: auto;
 }
+
+.icon-large {
+	font-size: $base-font-size * 5;
+}
+
+.icon-with-text {
+    text-align: justify;
+}
+
+.icon-with-text div {
+    display: block;
+    margin: 0 auto;
+}
+
+.clear {
+	color: inherit;
+}
+.clear:visited {
+	color: inherit;
+}
+
+.row {
+  display: flex;
+}
+
+.column {
+  padding: 5px;
+  text-align: center;
+}
+
+.column-2 {
+  flex: 50%;
+}
+
+.column-3 {
+  flex: 33.33%;
+}
+
+.column-4 {
+  flex: 25%;
+}
