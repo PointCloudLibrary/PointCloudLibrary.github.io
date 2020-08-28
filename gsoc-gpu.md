@@ -5,9 +5,7 @@ short: GSoC 2020 GPU & Refactoring
 permalink: /gsoc-gpu/
 ---
 
-<img src="{{ '/assets/images/gsoc-2020/gpu_approx.png' | relative_url }}" alt="approx-search" width="200" class="center" />
-<img src="{{ '/assets/images/gsoc-2020/gpu_radius.png' | relative_url }}" alt="radius-search" width="200" class="center" />
-<img src="{{ '/assets/images/gsoc-2020/gpu_knn.png' | relative_url }}" alt="knn-search" width="200" class="center" />
+<img src="{{ '/assets/images/gsoc-2020/gpu_approx.png' | relative_url }}" alt="approx-search" width="200" /> <img src="{{ '/assets/images/gsoc-2020/gpu_radius.png' | relative_url }}" alt="radius-search" width="200" /> <img src="{{ '/assets/images/gsoc-2020/gpu_knn.png' | relative_url }}" alt="knn-search" width="200" />
 
 **Student:** [Haritha Jayasinghe][haritha]
 
