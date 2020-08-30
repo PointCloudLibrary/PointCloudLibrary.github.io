@@ -26,7 +26,7 @@ Due to these discoveries,  the scope of the GPU modernization effort was expande
 
 ### Fixes to Octree search methods and modernizing CUDA functions
 
-Related PRs: [[#4146]](https://github.com/PointCloudLibrary/pcl/pull/4146) [[#4306]](https://github.com/PointCloudLibrary/pcl/pull/4306) [[#4313]](https://github.com/PointCloudLibrary/pcl/pull/4313)
+Related PRs: [[4146]](https://github.com/PointCloudLibrary/pcl/pull/4146) [[4306]](https://github.com/PointCloudLibrary/pcl/pull/4306) [[4313]](https://github.com/PointCloudLibrary/pcl/pull/4313)
 
 After comprehensively going through the GPU search methods to investigate their functionality and the causes of the above issues, we identified two separate bugs as the underlying cause:
   1. In approximate nearest search and K nearest search, an outdated method was being used to synchronize data between threads in order to sort distances across warp threads. This was fixed by replacing the functionality with warp level primitives introduced in CUDA 9.0 detailed in https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/ .
@@ -36,7 +36,7 @@ Since much of the code inside the above functions utilized an outdated concept o
 
 ### Implementation of new traversal mechanism of approximate nearest search
 
-Related PRs: [[#4294]](https://github.com/PointCloudLibrary/pcl/pull/4294)
+Related PRs: [[4294]](https://github.com/PointCloudLibrary/pcl/pull/4294)
 
 The existing implementation of approximate nearest search utilized a simple traversal mechanism which traverses down octree nodes until an empty node is found. Once an empty node is discovered, all points within the parent are searched exhaustively for the closest point. However the CPU counterpart of the approximate nearest search algorithm uses a heuristic (distance from query point to voxel center) to determine the most appropriate voxel to traverse, in case an empty node is discovered. Thus this algorithm will always traverse to the lowest level of an octree. The same traversal method was adapted to the morton code based octree traversal mechanism and implemented for the two GPU approximate nearest search methods.
 
@@ -44,7 +44,7 @@ In addition a new test was designed to assess the functionality of the new trave
 
 ### Modifying search functions to return square distances
 
-Related PRs: [[#4338]](https://github.com/PointCloudLibrary/pcl/pull/4338) [[4340]](https://github.com/PointCloudLibrary/pcl/pull/4340)
+Related PRs: [[4338]](https://github.com/PointCloudLibrary/pcl/pull/4338) [[4340]](https://github.com/PointCloudLibrary/pcl/pull/4340)
 
 One noticeable flaw in the current GPU search implementations was the inability to return square distances to the identified result points. In order to counter this, the search methods were modified to keep track of and return the distances to the identified results. For Approximate nearest search and K nearest search this was relatively easy, and did not incur a time penalty.
 
@@ -82,6 +82,62 @@ In addition, from the synchronous search methods mentioned earlier, it was decid
 One additional drawback with the current GPU K nearest neighbour search algorithm is that it is currently restricted to k = 1 only. A review of the current code base makes it clear that significant modifications and additions are required to both the traversal mechanism as well as the distance computation kernel in order to extend support for any arbitrary K. This provides an interesting challenge to be tackled in the future, which would bring additional value to the GPU octree module.
 
 ## Introducing flexible types for indices
+
+As laser scans and LIDAR becomes more popular, the need arises for handling clouds with a very large number of points. However, many algorithms within the Point Cloud Library are incapable of handling point clouds containing over 2 billion points due to their indices being limited to 32 bits, which caps the size of supported point clouds at 2 billion. Furthermore, there currently isn’t one standard type being used for indices, instead, a variety of types such as `int`, `long`, `unsigned_int`, and others are being used. Therefore, there is a pressing need to switch to a standard type for indices.
+
+On the flip side, due to the increased memory usage of types with larger capacity, the memory efficiency of the library may be significantly reduced, and further complications with caching etc. may arise, which can be a serious concern considering the large variety of platforms that PCL is used on. Thus, the ideal solution would be to allow the user to choose which point type to utilize at compile-time, based on his intended use case and platform.
+
+This flexibility can be offered to the user by transitioning the PCL library’s various modules to the `pcl::index_t` type.
+
+### Providing compile time options to select index types
+
+Related PRs: [[4166]](https://github.com/PointCloudLibrary/pcl/pull/4166)
+
+CMake options were added to allow users to select:
+-	Type of index (signed / unsigned – signed by default);
+-	Sign of index (8 / 16 / 32 / 64 – 32 by default);
+at compile-time, from PCL 1.12 onwards.
+
+### Adding a CI job for testing 64bit unsigned index type
+
+Related RPs: [[4184]](https://github.com/PointCloudLibrary/pcl/pull/4184)
+
+An additional job was added to the CI pipeline to check for any failures that may arise when compiling/running tests with 64 bit, unsigned indices, as opposed to the default 32 bit, signed indices. The CI job was initially configured to only build the modules that have been transitioned to the new index type, so that, as more modules are transitioned, they could be added to the build configuration. 
+
+### Transitioning fundamental classes to the `index_t` type
+
+Related PRs: [[4173]](https://github.com/PointCloudLibrary/pcl/pull/4173) [[4199]](https://github.com/PointCloudLibrary/pcl/pull/4199) [[4198]](https://github.com/PointCloudLibrary/pcl/pull/4198) [[4205]](https://github.com/PointCloudLibrary/pcl/pull/4205) [[4211]](https://github.com/PointCloudLibrary/pcl/pull/4211) [[4224]](https://github.com/PointCloudLibrary/pcl/pull/4224) [[4228]](https://github.com/PointCloudLibrary/pcl/pull/4228) [[4231]]( https://github.com/PointCloudLibrary/pcl/pull/4231) [[4256]](https://github.com/PointCloudLibrary/pcl/pull/4256) [[4257]](https://github.com/PointCloudLibrary/pcl/pull/4257)
+
+A set of fundamental classes such as `pcl::PointCloud` lie at the core of PCL. These classes contain various data representations which did not have a common type of index. In order to mitigate this issue, all such indices from these classes were switched to the `index_t` type.
+
+For situations where unsigned indices were required, a new type called `uindex_t` was also introduced, which acts as an unsigned version of the `index_t`.
+
+This transition was carried out for the following classes:
+-	PointCloud
+-	PCLPointCloud2
+-	PCLBase
+-	PCLPointField
+-	Correspondences
+-	Vertices
+-	PCLImage
+
+During the above transition process, it was discovered that significant additional work was required to address the numerous sign comparison warnings and other errors that arose from the transition in some of the above classes, which took up considerable time.
+
+Furthermore, any changes beyond transitioning the above fundamental classes would have required additional workarounds to carry on, if they were to be carried out before the changes to the fundamental classes have been merged. (These features were planned to be merged in in PCL 1.12). Thus, work was shifted to the GPU module at this point.
+
+In addition, while the common module had already been modified to make it compatible with `index_t`, the tests for this module had not been modified. This was achieved with a very straightforward replacement of integer vectors with `index_t` vectors.
+
+### Transitioning the octree module
+
+Related PRs: [[4179]](https://github.com/PointCloudLibrary/pcl/pull/4179)
+
+All indices within the octree module were converted to `index_t` and its derivatives. This was also a fairly straightforward process of replacing types, once the fundamental types have already been transitioned. The tests for the octree module were also modified to achieve the same effect.
+
+### Conclusion and future work
+
+The work carried out primarily focuses on setting the stage for an easy transition towards flexible index types. To this end, the `index_t` type has been adapted into the fundamental classes and resulting complications have been addressed. The CI pipeline has also been modified to verify the success of this transition.
+
+However, since the above changes only partially cover the transition to flexible index types, additional work must be carried out to complete the transition. Specifically, the rest of the modules must be converted to index_t, and findings from the work done for the transition of the octree module demonstrate a fairly straightforward path towards the conversion of these modules and their tests.
 
 ## Summary
 
