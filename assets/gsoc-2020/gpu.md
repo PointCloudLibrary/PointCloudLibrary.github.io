@@ -2,7 +2,7 @@
 layout: page
 title: Google Summer of Code 2020 - Refactoring, Modernisation & Feature Addition with Emphasis on GPU Module
 short: GSoC 2020 GPU & Refactoring
-permalink: /gsoc-2020-gpu/
+permalink: /gsoc-2020/gpu/
 ---
 
 <img src="{{ '/assets/images/gsoc-2020/gpu_approx.png' | relative_url }}" alt="approx-search" width="200" /> <img src="{{ '/assets/images/gsoc-2020/gpu_radius.png' | relative_url }}" alt="radius-search" width="200" /> <img src="{{ '/assets/images/gsoc-2020/gpu_knn.png' | relative_url }}" alt="knn-search" width="200" />
@@ -18,7 +18,18 @@ Octrees are specialized data structures with nodes that split into eight subchil
 
 In many cases the GPU algorithms can execute tasks orders of magnitude faster than it’s CPU counterpart, which can be crucial when working with large point clouds. Unfortunately the GPU API is quite limited and often lacks much of the functionality offered in the equivalent CPU algorithms. The primary aim of this task was to bridge these inconsistencies.
 
-While the initial plan was not to spend an extensive amount of time on the GPU octree module, upon closer inspection it was discovered that there were many irregularities and errors within the GPU octree module. Specifically, two of the three primary methods offered by the GPU octree module, namely K Nearest Neighbours search and Approximate Nearest Neighbors search were both returning incorrect results while one of the implementations of the remaining method (Radius Search) was also returning incorrect results. In addition to these search methods, there are two 'synchronous' versions of the radius search and approximate nearest search methods provided by this module, which provide CPU based  implementations (i.e. non parallelized versions that do not use CUDA kernels) of their GPU based counterparts.
+The primary search methods provided by the GPU octree module are listed below
+- A. Approximate Nearest Search
+	1. Asynchronous (GPU based) Approximate Nearest Search
+	2. Synchronous (CPU based) Approximate Nearest Search
+- B. Radius Search
+	1. Asynchronous (GPU based) Radius Search with common radius
+	2. Asynchronous (GPU based) Radius Search with individual radius for each query
+	3. Asynchronous (GPU based) Radius Search for specified indices with common radius
+	4. Synchronous (CPU based) Radius Search
+- C. Asynchronous (GPU based) K Nearest Search
+
+While the initial plan was not to spend an extensive amount of time on the GPU octree module, upon closer inspection it was discovered that there were many irregularities and errors within the GPU octree module. Specifically, two of the three primary methods offered by the GPU octree module, namely K Nearest Neighbours search (C) and Asynchronous Approximate Nearest Neighbors search(A-1) were both returning incorrect results while one of the implementations of the Radius Search (B-2) was also returning incorrect results. The two 'synchronous' versions of the radius search and approximate nearest search methods listed above (A-2 & B-4) provide CPU based  implementations (i.e. non parallelized versions that do not use CUDA kernels) of their GPU based counterparts.
 
 All of these functions were utilizing outdated CUDA primitives and idioms, risking deprecation in the near future. When diving into the code, it was also discovered that the GPU approximate nearest neighbours algorithm used a completely different traversal methodology from it's CPU counterpart.
 
@@ -29,7 +40,7 @@ Due to these discoveries,  the scope of the GPU modernization effort was expande
 Related PRs: [[4146]](https://github.com/PointCloudLibrary/pcl/pull/4146) [[4306]](https://github.com/PointCloudLibrary/pcl/pull/4306) [[4313]](https://github.com/PointCloudLibrary/pcl/pull/4313)
 
 After comprehensively going through the GPU search methods to investigate their functionality and the causes of the above issues, we identified two separate bugs as the underlying cause:
-  1. In approximate nearest search and K nearest search, an outdated method was being used to synchronize data between threads in order to sort distances across warp threads. This was fixed by replacing the functionality with warp level primitives introduced in CUDA 9.0 detailed in https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/ .
+  1. In approximate nearest search and K nearest search, an outdated method was being used to synchronize data between threads in order to sort distances across warp threads. This was fixed by replacing the functionality with warp level primitives introduced in CUDA 9.0 detailed [here.](https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/)
   2. In radius search, the correct radius was not shared between warp threads. Thus the search was being conducted for incorrect radius values. Synchronizing the radius values across the threads fixed this issue.
 
 Since much of the code inside the above functions utilized an outdated concept of using volatile memory for sharing data between threads, they were also replaced by utilizing warp primitives to synchronize thread data.
@@ -53,7 +64,8 @@ However this was not the case for Radius search, as any octree node that was loc
 Additional tests were added to ensure the accuracy of all returned distances.
 
 ### Addition of a GPU octree tutorial
-<TODO link to tutorial>
+
+Related PRs: [[4347]](https://github.com/PointCloudLibrary/pcl/pull/4347)
 
 This tutorial aims to provide users an in-depth overview of the functionality offered by the modernized GPU octree module. It consists of:
  - An introduction to the GPU octree module and search functions;
@@ -85,7 +97,7 @@ One additional drawback with the current GPU K nearest neighbour search algorith
 
 As laser scans and LIDAR becomes more popular, the need arises for handling clouds with a very large number of points. However, many algorithms within the Point Cloud Library are incapable of handling point clouds containing over 2 billion points due to their indices being limited to 32 bits, which caps the size of supported point clouds at 2 billion. Furthermore, there currently isn’t one standard type being used for indices, instead, a variety of types such as `int`, `long`, `unsigned_int`, and others are being used. Therefore, there is a pressing need to switch to a standard type for indices.
 
-On the flip side, due to the increased memory usage of types with larger capacity, the memory efficiency of the library may be significantly reduced, and further complications with caching etc. may arise, which can be a serious concern considering the large variety of platforms that PCL is used on. Thus, the ideal solution would be to allow the user to choose which point type to utilize at compile-time, based on his intended use case and platform.
+On the flip side, the usage of types with larger capacity leads to increased memory usage and cache misses. This might not be optimal for resource constrained platforms like embedded devices. Thus, the ideal solution would be to allow the user to choose which point type to utilize at compile-time, based on his intended use case and platform.
 
 This flexibility can be offered to the user by transitioning the PCL library’s various modules to the `pcl::index_t` type.
 
@@ -100,7 +112,7 @@ at compile-time, from PCL 1.12 onwards.
 
 ### Adding a CI job for testing 64bit unsigned index type
 
-Related RPs: [[4184]](https://github.com/PointCloudLibrary/pcl/pull/4184)
+Related PRs: [[4184]](https://github.com/PointCloudLibrary/pcl/pull/4184)
 
 An additional job was added to the CI pipeline to check for any failures that may arise when compiling/running tests with 64 bit, unsigned indices, as opposed to the default 32 bit, signed indices. The CI job was initially configured to only build the modules that have been transitioned to the new index type, so that, as more modules are transitioned, they could be added to the build configuration. 
 
@@ -144,3 +156,7 @@ However, since the above changes only partially cover the transition to flexible
 The internship period was focused on tackling “modernization of the GPU octree module” and “Introducing flexible types for indices”. The scope of these tasks were initially under-estimated in the original proposal, and additional requirements were discovered, which resulted in skipping some of the other goals in favour of prioritizing the above tasks.
 
 The work carried out during the period ensure that the GPU octree search functions now produce accurate results, are verified by tests, adheres to modern CUDA standards, tallies in most cases with their CPU counterpart, and provides users an in-depth overview of their usage and functionality. Furthermore, it sets up the groundwork needed for a full transition to flexible types for point indices to ensure that PCL meets the growing needs of its community.
+
+[haritha]: https://github.com/haritha-j
+[sergio]: https://github.com/SergioRAgostinho
+[lars]: https://github.com/larshg
