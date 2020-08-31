@@ -59,5 +59,11 @@ Refactoring (In Progress): [#4287](https://github.com/PointCloudLibrary/pcl/pull
 
 This project has been a great learning experience. There was a learning curve, but I was able to go deep into the C++ language itself and become familiar with some handy tools and libraries that I would not have come across on my own under normal circumstances. All the hours I put into GSoC have definitely been worth it. This is, in large part, to the fantastic mentors I had. The amount of hours they themselves have put into this project in reviewing my code, helping build prototypes of features, teaching various language tricks and concepts, and in general, just guiding me throughout the project has helped make this experience worthwhile in itself.
 
-Kudos to my mentors [@kunaltyagi][kunal]] and [@SergioRAgostinho][sergio].
+Kudos to my mentors [@kunaltyagi][kunal] and [@SergioRAgostinho][sergio].
 Shoutouts to [@aPonza][aponza] and [@larshg][lars] for doing a fabulous job mentoring other projects as well.
+
+[shrijit]: https://github.com/shrijitsingh99
+[kunal]: https://github.com/kunaltyagi
+[sergio]: https://github.com/SergioRAgostinho
+[aponza]: https://github.com/aPonza
+[lars]: https://github.com/larshg
