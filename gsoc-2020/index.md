@@ -22,7 +22,7 @@ After a long hiatus, PCL is once more participating in the Google Summer of Code
 
 Extending PCL's use case by generating bindings for its use with interface languages like Python, for rapid development and maximal speed. The approach makes use of Pybind11 to expose PCL's C++ code and generate bindings in the form of python modules by using necessary type information. It supports automatic regeneration of the bindings when the underlying C++ code changes, to work with PCL's active development cycle.
 
-### Refactoring, Modernisation & Feature Addition with Emphasis on GPU Module
+### [Refactoring, Modernisation & Feature Addition with Emphasis on GPU Module](/gsoc-2020/gpu)
 
 **Student:** [Haritha Jayasinghe][haritha]
 
@@ -40,6 +40,8 @@ As well as to refactor and modernize the library by means of;
 * Introducing better type for point indices, thereby providing support for larger point clouds
 * Introducing a fluent API for algorithms
 * Modernising the GPU Octree module to align with the it’s CPU counterpart
+
+**Final report:** [url](/gsoc-2020/gpu)
 
 ### Unified API for Algorithms
 

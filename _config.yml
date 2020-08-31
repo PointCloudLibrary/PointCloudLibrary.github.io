@@ -44,7 +44,7 @@ navigation:
 
 header_pages:
   - downloads.md
-  - gsoc-2020.md
+  - gsoc-2020/index.md
   - about.md
 
 # Exclude from processing.
