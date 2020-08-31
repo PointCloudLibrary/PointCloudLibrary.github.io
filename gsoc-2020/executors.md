@@ -28,7 +28,7 @@ The PR's related to executors in PCL are:
 As part of my GSoC, I also worked on improving CI infrastructure
 and refactoring parts of the codebase for easier integration with
 executors.  
-**CI:** [#4131](https://github.com/PointCloudLibrary/pcl/pull/4131),
+CI: [#4131](https://github.com/PointCloudLibrary/pcl/pull/4131),
 [#4130](https://github.com/PointCloudLibrary/pcl/pull/4130),
 [#4101](https://github.com/PointCloudLibrary/pcl/pull/4101)
 | Pre-GSOC [#3886](https://github.com/PointCloudLibrary/pcl/pull/3886),
@@ -38,7 +38,7 @@ executors.
 [#3745](https://github.com/PointCloudLibrary/pcl/pull/3745),
 [#4131](https://github.com/PointCloudLibrary/pcl/pull/4131)
 
-**Refactoring (In Progress):** [#4287](https://github.com/PointCloudLibrary/pcl/pull/4287)
+Refactoring (In Progress): [#4287](https://github.com/PointCloudLibrary/pcl/pull/4287)
 [#4281](https://github.com/PointCloudLibrary/pcl/pull/4281),
 [#4279](https://github.com/PointCloudLibrary/pcl/pull/4279),
 [#4628](https://github.com/PointCloudLibrary/pcl/pull/4268)
