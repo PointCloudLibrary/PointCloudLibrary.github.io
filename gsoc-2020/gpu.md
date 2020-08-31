@@ -29,7 +29,9 @@ The primary search methods provided by the GPU octree module are listed below
 	4. Synchronous (CPU based) Radius Search
 - C. Asynchronous (GPU based) K Nearest Search
 
-While the initial plan was not to spend an extensive amount of time on the GPU octree module, upon closer inspection it was discovered that there were many irregularities and errors within the GPU octree module. Specifically, two of the three primary methods offered by the GPU octree module, namely K Nearest Neighbours search (C) and Asynchronous Approximate Nearest Neighbors search(A-1) were both returning incorrect results while one of the implementations of the Radius Search (B-2) was also returning incorrect results. The two 'synchronous' versions of the radius search and approximate nearest search methods listed above (A-2 & B-4) provide CPU based  implementations (i.e. non parallelized versions that do not use CUDA kernels) of their GPU based counterparts.
+The two 'synchronous' versions of the radius search and approximate nearest search methods listed above (A-2 & B-4) provide CPU based  implementations (i.e. non parallelized versions that do not use CUDA kernels) of their GPU based counterparts.
+
+While the initial plan was not to spend an extensive amount of time on the GPU octree module, upon closer inspection it was discovered that there were many irregularities and errors within the GPU octree module. Specifically, two of the three primary methods offered by the GPU octree module, namely K Nearest Neighbours search (C) and Asynchronous Approximate Nearest Neighbors search(A-1) were both returning incorrect results. Furthermore, one of of Radius Search's variants (B-2) was also returning incorrect results.
 
 All of these functions were utilizing outdated CUDA primitives and idioms, risking deprecation in the near future. When diving into the code, it was also discovered that the GPU approximate nearest neighbours algorithm used a completely different traversal methodology from it's CPU counterpart.
 
@@ -40,12 +42,12 @@ Due to these discoveries,  the scope of the GPU modernization effort was expande
 Related PRs: [[4146]](https://github.com/PointCloudLibrary/pcl/pull/4146) [[4306]](https://github.com/PointCloudLibrary/pcl/pull/4306) [[4313]](https://github.com/PointCloudLibrary/pcl/pull/4313)
 
 After comprehensively going through the GPU search methods to investigate their functionality and the causes of the above issues, we identified two separate bugs as the underlying cause:
-  1. In approximate nearest search and K nearest search, an outdated method was being used to synchronize data between threads in order to sort distances across warp threads. This was fixed by replacing the functionality with warp level primitives introduced in CUDA 9.0 detailed [here.](https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/)
+  1. In approximate nearest search and K nearest search, an outdated method was being used to synchronize data between threads in order to sort distances across warp threads. This was fixed by replacing the functionality with [warp level primitives introduced in CUDA 9.0](https://developer.nvidia.com/blog/using-cuda-warp-level-primitives/).
   2. In radius search, the correct radius was not shared between warp threads. Thus the search was being conducted for incorrect radius values. Synchronizing the radius values across the threads fixed this issue.
 
-Since much of the code inside the above functions utilized an outdated concept of using volatile memory for sharing data between threads, they were also replaced by utilizing warp primitives to synchronize thread data.
+Since much of the code inside the above functions utilized an outdated concept of using volatile memory for sharing data between threads, they were also replaced by newer warp primitives to synchronize thread data.
 
-### Implementation of new traversal mechanism of approximate nearest search
+### Implementation of a new traversal mechanism for approximate nearest search
 
 Related PRs: [[4294]](https://github.com/PointCloudLibrary/pcl/pull/4294)
 
@@ -106,8 +108,8 @@ This flexibility can be offered to the user by transitioning the PCL library’s
 Related PRs: [[4166]](https://github.com/PointCloudLibrary/pcl/pull/4166)
 
 CMake options were added to allow users to select:
--	Type of index (signed / unsigned – signed by default);
--	Sign of index (8 / 16 / 32 / 64 – 32 by default);
+-	Signedness of index (signed / unsigned – signed by default);
+-	Size of index (8 / 16 / 32 / 64 – 32 by default);
 at compile-time, from PCL 1.12 onwards.
 
 ### Adding a CI job for testing 64bit unsigned index type
@@ -125,17 +127,17 @@ A set of fundamental classes such as `pcl::PointCloud` lie at the core of PCL. T
 For situations where unsigned indices were required, a new type called `uindex_t` was also introduced, which acts as an unsigned version of the `index_t`.
 
 This transition was carried out for the following classes:
--	PointCloud
--	PCLPointCloud2
--	PCLBase
--	PCLPointField
--	Correspondences
--	Vertices
--	PCLImage
+-	`PointCloud`
+-	`PCLPointCloud2`
+-	`PCLBase`
+-	`PCLPointField`
+-	`Correspondences`
+-	`Vertices`
+-	`PCLImage`
 
 During the above transition process, it was discovered that significant additional work was required to address the numerous sign comparison warnings and other errors that arose from the transition in some of the above classes, which took up considerable time.
 
-Furthermore, any changes beyond transitioning the above fundamental classes would have required additional workarounds to carry on, if they were to be carried out before the changes to the fundamental classes have been merged. (These features were planned to be merged in in PCL 1.12). Thus, work was shifted to the GPU module at this point.
+Furthermore, any changes beyond transitioning the above fundamental classes would have required additional workarounds to carry on, if they were to be carried out before the changes to the fundamental classes have been merged. (These features were planned to be merged in PCL 1.12). Thus, work was shifted to the GPU module at this point.
 
 In addition, while the common module had already been modified to make it compatible with `index_t`, the tests for this module had not been modified. This was achieved with a very straightforward replacement of integer vectors with `index_t` vectors.
 
