@@ -43,13 +43,15 @@ As well as to refactor and modernize the library by means of;
 
 **Final report:** [url](/gsoc-2020/gpu)
 
-### Unified API for Algorithms
+### [Unified API for Algorithms](/gsoc-2020/gpu)
 
 **Student:** [Shrijit Singh][shrijit]
 
 **Mentors:** [Kunal Tyagi][kunal], [Sérgio Agostinho][sergio]
 
 **Proposal:** [url](/assets/pdf/gsoc-2020/proposal-executor.pdf)
+
+**Final Report:** [url](/gsoc-2020/executors)
 
 **Summary**
 
