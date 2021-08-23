@@ -9,7 +9,7 @@ In the early years, the filters were created by different developers, a unified 
 
 We found some instances of the boilerplate codes in the voxel filters: `ApproximateVoxelGrid`, `VoxelGrid`, `GridMinimum`, `VoxelGridLabel`, `UniformSampling` (and also in the binary removal filters)
 
-OOur goal was to investigate a unified code design that eliminates redundancy by refactoring similar code pieces across multiple filters without breaking the present API, while simultaneously attempting to simplify implementation and increase runtime speed.
+Our goal was to investigate a unified code design that eliminates redundancy by refactoring similar code pieces across multiple filters without breaking the present API, while simultaneously attempting to simplify implementation and increase runtime speed.
 
 ## Developments
 
