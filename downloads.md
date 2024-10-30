@@ -4,6 +4,10 @@ title: Downloads
 permalink: /downloads/
 ---
 
+## Source code
+
+You can find the source code at [our GitHub](https://github.com/PointCloudLibrary/pcl). If you are looking for a specific release, see the [Releases page](https://github.com/PointCloudLibrary/pcl/releases). If you have problems building from source, check out the tutorials.
+
 ## Prebuilt binaries
 
 
@@ -39,7 +43,7 @@ In case your OS does not have a dedicated package manager, consider one of the f
 PS> .\vcpkg install pcl
 ```
 
-This is our recommended installation method for **Windows** users.
+Be sure to check out our tutorial "Using PCL on windows with VCPKG and CMake". This is our recommended installation method for **Windows** users.
 
 ### Homebrew
 
