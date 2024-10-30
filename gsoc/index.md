@@ -1,12 +1,27 @@
 ---
 layout: page
-title: Google Summer of Code 2020
-short: GSoC 2020
-permalink: /gsoc-2020/
+title: Google Summer of Code
+short: GSoC
+permalink: /gsoc/
 ---
 
 <img src="{{ '/assets/images/gsoc-2020/gsoc-logo.svg' | relative_url }}" alt="gsoc-logo" width="300" class="center" />
 
+## Summary
+
+- [GSoc 2021](#2021)
+- [GSoc 2020](#2020)
+<hr class="light-gray">
+<br>
+
+### 2021
+
+(Coming soon)
+
+<hr class="light-gray">
+<br>
+
+### 2020
 
 After a long hiatus, PCL is once more participating in the Google Summer of Code initiative, this year with 3 projects. 
 
@@ -22,7 +37,7 @@ After a long hiatus, PCL is once more participating in the Google Summer of Code
 
 Extending PCL's use case by generating bindings for its use with interface languages like Python, for rapid development and maximal speed. The approach makes use of Pybind11 to expose PCL's C++ code and generate bindings in the form of python modules by using necessary type information. It supports automatic regeneration of the bindings when the underlying C++ code changes, to work with PCL's active development cycle.
 
-### [Refactoring, Modernisation & Feature Addition with Emphasis on GPU Module](/gsoc-2020/gpu)
+### [Refactoring, Modernisation & Feature Addition with Emphasis on GPU Module](/gsoc/gsoc-2020/gpu)
 
 **Student:** [Haritha Jayasinghe][haritha]
 
@@ -41,9 +56,9 @@ As well as to refactor and modernize the library by means of;
 * Introducing a fluent API for algorithms
 * Modernising the GPU Octree module to align with the it’s CPU counterpart
 
-**Final report:** [url](/gsoc-2020/gpu)
+**Final report:** [url](/gsoc/gsoc-2020/gpu)
 
-### [Unified API for Algorithms](/gsoc-2020/executors)
+### [Unified API for Algorithms](/gsoc/gsoc-2020/executors)
 
 **Student:** [Shrijit Singh][shrijit]
 
@@ -51,7 +66,7 @@ As well as to refactor and modernize the library by means of;
 
 **Proposal:** [url](/assets/pdf/gsoc-2020/proposal-executor.pdf)
 
-**Final Report:** [url](/gsoc-2020/executors)
+**Final Report:** [url](/gsoc/gsoc-2020/executors)
 
 **Summary**
 

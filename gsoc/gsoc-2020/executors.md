@@ -2,7 +2,7 @@
 layout: page
 title: Google Summer of Code 2020 - Unified API for Algorithms
 short: GSoC 2020 Executors
-permalink: /gsoc-2020/executors/
+permalink: /gsoc/gsoc-2020/executors/
 ---
 
 **Student:** [Shrijit Singh][shrijit]

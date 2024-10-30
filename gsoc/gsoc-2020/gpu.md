@@ -2,7 +2,7 @@
 layout: page
 title: Google Summer of Code 2020 - Refactoring, Modernisation & Feature Addition with Emphasis on GPU Module
 short: GSoC 2020 GPU & Refactoring
-permalink: /gsoc-2020/gpu/
+permalink: /gsoc/gsoc-2020/gpu/
 ---
 
 <img src="{{ '/assets/images/gsoc-2020/gpu_radius.png' | relative_url }}" alt="radius-search" width="720" /> 
